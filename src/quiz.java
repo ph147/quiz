@@ -40,8 +40,7 @@ public class quiz extends MIDlet implements CommandListener {
     private int hintCounter, questionNumber, revealedLetters;
     private String question, answer, hint;
 
-    // TODO: read from file
-    private int numberOfBytes = 56400;
+    private int numberOfBytes;
     private int numberOfQuestions = 1000;
 
     private String filename = "questions.de";
@@ -85,8 +84,20 @@ public class quiz extends MIDlet implements CommandListener {
         gameFocused = true;
         questionNumber = 0;
 
+        getFileSize();
         getNextQuestion();
         startTimer();
+    }
+
+    public void getFileSize() {
+        try {
+            InputStream is = getClass().getResourceAsStream(filename);
+            numberOfBytes = is.available();
+        } catch (Exception e) {
+            // File not found
+            destroyApp(false);
+            notifyDestroyed();
+        }
     }
 
     public void getNextQuestion() {
@@ -125,6 +136,9 @@ public class quiz extends MIDlet implements CommandListener {
 
             String strLine = readLine(reader);
             temp = strLine.indexOf("|");
+            if (temp < 0) {
+                getNextQuestion();
+            }
             question = strLine.substring(0,temp);
             answer = strLine.substring(temp+1,strLine.length());
             reader.close();
@@ -136,12 +150,13 @@ public class quiz extends MIDlet implements CommandListener {
     // Skip number of bytes in 8kb chunks
     public void skip (InputStreamReader reader, long bytes) throws IOException {
         int readChar;
-        int chunk = 8024;
+        int chunk = 8192;
         char temp[] = new char[chunk];
         long counter = 0;
         while (counter+chunk < bytes) {
-            reader.read(temp, 0, chunk);
-            counter += chunk;
+            if ((readChar = reader.read(temp, 0, chunk))>-1) {
+                counter += chunk;
+            }
         }
         for (int i = 0; i < bytes-counter; ++i) {
             readChar = reader.read();
