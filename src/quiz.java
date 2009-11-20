@@ -206,13 +206,13 @@ public class quiz extends MIDlet implements CommandListener {
     }
 
     public String process(String r) {
-        //TODO: Regexp, Umlaute
         r = r.toLowerCase();
         r = replaceAll(r,"ä","ae");
         r = replaceAll(r,"ü","ue");
         r = replaceAll(r,"ö","oe");
         r = replaceAll(r,"é","e");
         r = replaceAll(r,"è","e");
+        r = replaceAll(r,"ß","ss");
         return r;
     }
 
