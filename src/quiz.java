@@ -27,13 +27,14 @@ public class quiz extends MIDlet implements CommandListener {
     private int timeBetweenQuestions = 0;
     private int numberOfHints = 5;
 
-    private Command exitCommand, typeCommand, backCommand;
+    private Command exitCommand, typeCommand, backCommand, menuCommand;
     private Form form;
     private Timer timer;
     private TestTimerTask task;
     private StringItem curItem;
     private TextBox textBox;
     private Date date;
+    private List menu, gameMenu;
 
     private boolean gameFocused, active;
 
@@ -46,34 +47,84 @@ public class quiz extends MIDlet implements CommandListener {
     private String filename = "questions.de";
 
     public quiz() {
-        backCommand = new Command("Enter", Command.BACK, 1);
-        typeCommand = new Command("Type", Command.SCREEN, 1);
-        exitCommand = new Command("Exit", Command.EXIT, 2);
+        backCommand = new Command("Zurück", Command.BACK, 2);
+        typeCommand = new Command("Tippen", Command.SCREEN, 1);
+        menuCommand = new Command("Menü", Command.BACK, 2);
+        exitCommand = new Command("Beenden", Command.EXIT, 2);
 
         form = new Form("Quiz");
-        form.addCommand(exitCommand);
+        form.addCommand(menuCommand);
         form.addCommand(typeCommand);
         form.setCommandListener(this);
+
+        gameMenu = new List("Spielmenü", List.IMPLICIT);
+        gameMenu.append("Frage beenden", null);
+        gameMenu.append("Zum Hauptmenü", null);
+        gameMenu.addCommand(backCommand);
+        gameMenu.setCommandListener(this);
     }
 
     protected void startApp() {
-        startQuiz();
-        Display.getDisplay(this).setCurrent(form);
+        getFileSize();
+        menu = new List("Menu", List.IMPLICIT);
+        menu.append("Quiz starten", null);
+        menu.append("Beenden", null);
+        menu.setCommandListener(this);
+        Display.getDisplay(this).setCurrent(menu);
     }
 
     protected void pauseApp() {}
     protected void destroyApp(boolean bool) {}
 
     public void commandAction(Command cmd, Displayable disp) {
-        if (cmd == typeCommand) {
-            openTypeDialogue();
-        } else if (cmd == backCommand) {
+        int choice;
+        // Main menu
+        if (disp == menu && cmd == List.SELECT_COMMAND) {
+            choice = menu.getSelectedIndex();
+            switch (choice) {
+                case 0:
+                    startQuiz();
+                    break;
+                case 1:
+                    destroyApp(false);
+                    notifyDestroyed();
+                    break;
+            }
+        // Game
+        } else if (disp == form) {
+            if (cmd == menuCommand) {
+                gameFocused = false;
+                Display.getDisplay(this).setCurrent(gameMenu);
+            } else if (cmd == typeCommand) {
+                openTypeDialogue();
+            }
+        // Game Menu
+        } else if (disp == gameMenu) {
+            if (cmd == List.SELECT_COMMAND) {
+                choice = gameMenu.getSelectedIndex();
+                switch (choice) {
+                    case 0:
+                        showSolution(false);
+                        break;
+                    case 1:
+                        stopQuiz();
+                        Display.getDisplay(this).setCurrent(menu);
+                        break;
+                }
+            } else if (cmd == backCommand) {
+                Display.getDisplay(this).setCurrent(form);
+            }
+        // Typing area
+        } else if (disp == textBox) {
             gameFocused = true;
             Display.getDisplay(this).setCurrent(form);
-            curItem = new StringItem("", "<User> "+textBox.getString()+"\n");
-            form.append(curItem);
-            Display.getDisplay(this).setCurrentItem(curItem);
-            checkResponse(textBox.getString());
+            if (cmd == typeCommand) {
+                Display.getDisplay(this).setCurrent(form);
+                curItem = new StringItem("", "<User> "+textBox.getString()+"\n");
+                form.append(curItem);
+                Display.getDisplay(this).setCurrentItem(curItem);
+                checkResponse(textBox.getString());
+            }
         } else if (cmd == exitCommand) {
             destroyApp(false);
             notifyDestroyed();
@@ -84,9 +135,15 @@ public class quiz extends MIDlet implements CommandListener {
         gameFocused = true;
         questionNumber = 0;
 
-        getFileSize();
         getNextQuestion();
         startTimer();
+    }
+
+    public void stopQuiz() {
+        gameFocused = false;
+        active = false;
+        timer.cancel();
+        form.deleteAll();
     }
 
     public void getFileSize() {
@@ -264,6 +321,7 @@ public class quiz extends MIDlet implements CommandListener {
 
     public void openTypeDialogue() {
         textBox = new TextBox("Type", "", 256, 0);
+        textBox.addCommand(typeCommand);
         textBox.addCommand(backCommand);
         textBox.setCommandListener(this);
         gameFocused = false;
