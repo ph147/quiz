@@ -117,6 +117,7 @@ public class quiz extends MIDlet implements CommandListener {
             } else if (cmd == backCommand) {
                 gameFocused = true;
                 Display.getDisplay(this).setCurrent(form);
+                Display.getDisplay(this).setCurrentItem(curItem);
             }
         // Typing area
         } else if (disp == textBox) {
