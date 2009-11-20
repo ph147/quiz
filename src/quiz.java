@@ -73,9 +73,7 @@ public class quiz extends MIDlet implements CommandListener {
             Display.getDisplay(this).setCurrent(form);
             curItem = new StringItem("", "<User> "+textBox.getString()+"\n");
             form.append(curItem);
-            if (active) {
-                Display.getDisplay(this).setCurrentItem(curItem);
-            }
+            Display.getDisplay(this).setCurrentItem(curItem);
             checkResponse(textBox.getString());
         } else if (cmd == exitCommand) {
             destroyApp(false);
@@ -228,6 +226,9 @@ public class quiz extends MIDlet implements CommandListener {
         if (active) {
             Date temp = new Date();
             long elapsed = (temp.getTime()-date.getTime())/1000;
+
+            // Clear screen after every question to save memory and cpu cycles
+            form.deleteAll();
 
             if (!answered) {
                 form.append("Automatisch aufgelöst nach "+elapsed+" Sekunden.\n");
