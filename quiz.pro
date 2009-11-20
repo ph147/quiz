@@ -1,0 +1,4 @@
+-libraryjars /home/niko/WTK2.5.2/lib/mmapi.jar:/home/niko/WTK2.5.2/lib/midpapi20.jar:/home/niko/WTK2.5.2/lib/wma11.jar:/home/niko/WTK2.5.2/lib/cldcapi10.jar
+-injars /home/niko/j2mewtk/2.5.2/apps/quiztest/bin/quiztest.jar
+-outjar /tmp/quiztest.jar
+-keep public class * extends javax.microedition.midlet.MIDlet 
