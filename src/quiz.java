@@ -106,6 +106,7 @@ public class quiz extends MIDlet implements CommandListener {
                     case 0:
                         gameFocused = true;
                         Display.getDisplay(this).setCurrent(form);
+                        Display.getDisplay(this).setCurrentItem(curItem);
                         showSolution(false);
                         break;
                     case 1:
@@ -121,8 +122,8 @@ public class quiz extends MIDlet implements CommandListener {
         } else if (disp == textBox) {
             gameFocused = true;
             Display.getDisplay(this).setCurrent(form);
+            Display.getDisplay(this).setCurrentItem(curItem);
             if (cmd == typeCommand) {
-                Display.getDisplay(this).setCurrent(form);
                 curItem = new StringItem("", "<User> "+textBox.getString()+"\n");
                 form.append(curItem);
                 Display.getDisplay(this).setCurrentItem(curItem);
