@@ -105,6 +105,7 @@ public class quiz extends MIDlet implements CommandListener {
                 switch (choice) {
                     case 0:
                         gameFocused = true;
+                        Display.getDisplay(this).setCurrent(form);
                         showSolution(false);
                         break;
                     case 1:
