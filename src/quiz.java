@@ -296,17 +296,17 @@ public class quiz extends MIDlet implements CommandListener {
             showSolution(false);
         } else {
             for (int i=0; i < answer.length(); i++) {
-                // Always show spaces
-                if (answer.substring(i,i+1).equals(" ")) {
-                    hint += " ";
-                } else {
                     if ((i-hintCounter)%numberOfHints == 0) {
                         hint += answer.substring(i,i+1);
                         revealedLetters++;
                     } else {
-                        hint += "·";
+                        // Always show spaces
+                        if (answer.substring(i,i+1).equals(" ")) {
+                            hint += " ";
+                        } else {
+                            hint += "·";
+                        }
                     }
-                }
             }
             curItem = new StringItem("Tip "+ ++hintCounter+": ",hint+"\n");
             form.append(curItem);
