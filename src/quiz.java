@@ -41,6 +41,8 @@ public class quiz extends MIDlet implements CommandListener {
     private int hintCounter, questionNumber, revealedLetters;
     private String question, answer, hint;
 
+    private String vowels = "aeiouüöä";
+
     private int numberOfBytes;
     private int numberOfQuestions = 1000;
 
@@ -59,6 +61,7 @@ public class quiz extends MIDlet implements CommandListener {
 
         gameMenu = new List("Spielmenü", List.IMPLICIT);
         gameMenu.append("Frage beenden", null);
+        gameMenu.append("Zeige Hinweis", null);
         gameMenu.append("Zum Hauptmenü", null);
         gameMenu.addCommand(backCommand);
         gameMenu.setCommandListener(this);
@@ -103,13 +106,19 @@ public class quiz extends MIDlet implements CommandListener {
             if (cmd == List.SELECT_COMMAND) {
                 choice = gameMenu.getSelectedIndex();
                 switch (choice) {
-                    case 0:
+                    case 0: // Frage beenden
                         gameFocused = true;
                         Display.getDisplay(this).setCurrent(form);
                         Display.getDisplay(this).setCurrentItem(curItem);
                         showSolution(false);
                         break;
-                    case 1:
+                    case 1: // Hinweis
+                        gameFocused = true;
+                        Display.getDisplay(this).setCurrent(form);
+                        Display.getDisplay(this).setCurrentItem(curItem);
+                        showTip();
+                        break;
+                    case 2: // Hauptmenü
                         stopQuiz();
                         Display.getDisplay(this).setCurrent(menu);
                         break;
@@ -174,6 +183,23 @@ public class quiz extends MIDlet implements CommandListener {
 
         date = new Date();
 
+        if (gameFocused) {
+            Display.getDisplay(this).setCurrentItem(curItem);
+        }
+    }
+
+    public void showTip() {
+        String cur, vok = "";
+        for (int i = 0; i < answer.length(); ++i) {
+            cur = answer.substring(i,i+1);
+            if (vowels.indexOf(cur.toLowerCase())>-1) {
+                vok += "·";
+            } else {
+                vok += cur;
+            }
+        }
+        curItem = new StringItem("Hinweis: ", vok);
+        form.append(curItem);
         if (gameFocused) {
             Display.getDisplay(this).setCurrentItem(curItem);
         }
