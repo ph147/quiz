@@ -296,13 +296,13 @@ public class quiz extends MIDlet implements CommandListener {
             showSolution(false);
         } else {
             for (int i=0; i < answer.length(); i++) {
-                if ((i-hintCounter)%numberOfHints == 0) {
-                    hint += answer.substring(i,i+1);
-                    revealedLetters++;
+                // Always show spaces
+                if (answer.substring(i,i+1).equals(" ")) {
+                    hint += " ";
                 } else {
-                    // Always show spaces
-                    if (answer.substring(i,i+1)==" ") {
-                        hint += " ";
+                    if ((i-hintCounter)%numberOfHints == 0) {
+                        hint += answer.substring(i,i+1);
+                        revealedLetters++;
                     } else {
                         hint += "·";
                     }
