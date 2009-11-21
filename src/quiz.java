@@ -39,7 +39,7 @@ public class quiz extends MIDlet implements CommandListener {
     private boolean gameFocused, active;
 
     private int hintCounter, questionNumber, revealedLetters;
-    private String question, answer, hint;
+    private String question, answer, hint, userReply;
 
     private String vowels = "aeiouüöä";
 
@@ -137,7 +137,8 @@ public class quiz extends MIDlet implements CommandListener {
                 curItem = new StringItem("", "<User> "+textBox.getString()+"\n");
                 form.append(curItem);
                 Display.getDisplay(this).setCurrentItem(curItem);
-                checkResponse(textBox.getString());
+                userReply += textBox.getString();
+                checkResponse(userReply);
             }
         } else if (cmd == exitCommand) {
             destroyApp(false);
@@ -173,6 +174,8 @@ public class quiz extends MIDlet implements CommandListener {
 
     public void getNextQuestion() {
         readFile();
+
+        userReply = "";
 
         hintCounter = 0;
         revealedLetters = 0;
@@ -297,7 +300,12 @@ public class quiz extends MIDlet implements CommandListener {
                     hint += answer.substring(i,i+1);
                     revealedLetters++;
                 } else {
-                    hint += "·";
+                    // Always show spaces
+                    if (answer.substring(i,i+1)==" ") {
+                        hint += " ";
+                    } else {
+                        hint += "·";
+                    }
                 }
             }
             curItem = new StringItem("Tip "+ ++hintCounter+": ",hint+"\n");
@@ -316,6 +324,7 @@ public class quiz extends MIDlet implements CommandListener {
         r = replaceAll(r,"é","e");
         r = replaceAll(r,"è","e");
         r = replaceAll(r,"ß","ss");
+        r = replaceAll(r," ","");
         return r;
     }
 
